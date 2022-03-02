@@ -1,0 +1,62 @@
+Certificate Request:
+    Data:
+        Version: 0 (0x0)
+        Subject: C=US, ST=Arizona, L=Phoenix, O=Axway Inc., CN=*.demo.axway.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:bf:2d:a6:55:2a:76:6b:f6:28:39:60:3d:47:07:
+                    58:9e:00:4b:77:45:f6:1e:96:d7:49:8b:15:02:9e:
+                    49:3a:a0:d7:bd:52:93:c4:50:73:99:56:db:9d:c9:
+                    b6:8c:07:55:6c:57:ca:9b:cd:7e:2a:85:b2:9c:61:
+                    16:ec:74:3f:d4:57:93:5b:3e:aa:c1:12:ec:bf:a7:
+                    f6:db:32:0c:6f:c0:b2:f7:75:2a:8d:54:cf:94:55:
+                    72:e2:ad:54:df:d5:28:e9:ac:01:92:af:2e:13:e7:
+                    49:4c:ca:af:e0:c5:1f:bb:15:ab:cf:4b:9e:d3:61:
+                    74:af:49:00:ee:6c:86:e8:b7:e6:ac:1c:62:a0:fd:
+                    8a:8a:64:8c:41:ec:8f:a5:13:17:5f:89:0e:98:2f:
+                    85:b7:a0:5b:06:59:9f:88:1a:b3:e0:62:f0:50:ad:
+                    9c:4f:45:22:b9:00:c6:1f:ce:cc:b9:49:ac:a3:6b:
+                    71:3d:b1:15:c8:c5:c0:d9:9c:81:b6:a6:14:56:bd:
+                    8d:e4:e5:93:13:dd:6f:02:ad:12:30:27:4c:fd:a4:
+                    2a:bb:17:68:57:24:12:ad:06:57:cb:c1:5c:46:87:
+                    b0:ec:33:bc:22:7e:06:11:af:69:4a:73:46:13:69:
+                    c0:81:1e:40:6f:3e:2b:25:24:70:e7:ef:81:be:df:
+                    77:f3
+                Exponent: 65537 (0x10001)
+        Attributes:
+            a0:00
+    Signature Algorithm: sha1WithRSAEncryption
+         81:ab:1e:07:91:1a:6c:92:6e:0c:4a:1a:41:44:3d:33:c1:b5:
+         6b:69:91:ec:e4:9d:f9:b5:34:ac:7f:4d:a6:37:d3:09:ee:35:
+         f2:a9:ff:3b:be:35:ce:1e:fb:5c:f0:64:a1:b9:43:4a:be:dd:
+         a6:6a:a4:2d:b2:d4:cf:fc:e6:a7:ad:12:92:1e:7a:18:8c:80:
+         cb:3e:ed:f7:f5:4f:98:73:10:3b:fa:89:56:4b:f8:92:c6:7f:
+         dd:cd:57:dc:e5:c2:4c:e7:7b:56:be:eb:c7:64:b1:44:ed:82:
+         1c:f3:bc:00:59:a6:c6:99:1d:cf:a6:59:73:ba:32:71:21:dd:
+         0a:e1:83:c2:51:a8:b5:84:4e:a6:65:81:f9:8a:70:6a:c9:cb:
+         2a:93:5a:68:2d:b7:99:6b:51:7b:68:bf:f0:fd:a4:64:ac:a6:
+         77:ea:db:07:68:13:45:6c:a8:9d:4c:fd:22:0f:49:98:21:b3:
+         62:b4:9b:dd:b2:58:da:27:35:34:2c:28:1d:1f:80:6d:72:ea:
+         0d:57:68:ae:d8:36:57:48:f5:26:dd:c7:d2:21:81:0f:5c:22:
+         ec:9a:28:dd:91:f8:54:37:9f:9b:02:1a:7c:3c:e5:8b:ef:7d:
+         a2:03:e6:0e:c2:2e:87:37:34:15:18:1f:0b:cd:94:87:04:88:
+         db:8a:df:f8
+-----BEGIN CERTIFICATE REQUEST-----
+MIICpjCCAY4CAQAwYTELMAkGA1UEBhMCVVMxEDAOBgNVBAgTB0FyaXpvbmExEDAO
+BgNVBAcTB1Bob2VuaXgxEzARBgNVBAoTCkF4d2F5IEluYy4xGTAXBgNVBAMMECou
+ZGVtby5heHdheS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/
+LaZVKnZr9ig5YD1HB1ieAEt3RfYeltdJixUCnkk6oNe9UpPEUHOZVtudybaMB1Vs
+V8qbzX4qhbKcYRbsdD/UV5NbPqrBEuy/p/bbMgxvwLL3dSqNVM+UVXLirVTf1Sjp
+rAGSry4T50lMyq/gxR+7FavPS57TYXSvSQDubIbot+asHGKg/YqKZIxB7I+lExdf
+iQ6YL4W3oFsGWZ+IGrPgYvBQrZxPRSK5AMYfzsy5Sayja3E9sRXIxcDZnIG2phRW
+vY3k5ZMT3W8CrRIwJ0z9pCq7F2hXJBKtBlfLwVxGh7DsM7wifgYRr2lKc0YTacCB
+HkBvPislJHDn74G+33fzAgMBAAGgADANBgkqhkiG9w0BAQUFAAOCAQEAgaseB5Ea
+bJJuDEoaQUQ9M8G1a2mR7OSd+bU0rH9NpjfTCe418qn/O741zh77XPBkoblDSr7d
+pmqkLbLUz/zmp60Skh56GIyAyz7t9/VPmHMQO/qJVkv4ksZ/3c1X3OXCTOd7Vr7r
+x2SxRO2CHPO8AFmmxpkdz6ZZc7oycSHdCuGDwlGotYROpmWB+YpwasnLKpNaaC23
+mWtRe2i/8P2kZKymd+rbB2gTRWyonUz9Ig9JmCGzYrSb3bJY2ic1NCwoHR+AbXLq
+DVdortg2V0j1Jt3H0iGBD1wi7Joo3ZH4VDefmwIafDzli+99ogPmDsIuhzc0FRgf
+C82UhwSI24rf+A==
+-----END CERTIFICATE REQUEST-----

@@ -1,0 +1,204 @@
+{{- if .Values.analytics.enabled -}}
+
+{{- $imageTag := include "apimgrImageTag" . -}}
+{{- $imagePullPolicy := include "imagePullPolicy" . -}}
+{{- $licenseSecret := include "licenseSecretName" . -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "analytics.name" . }}
+  labels: {{- include "analytics.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.analytics.replicas }}
+  selector:
+    matchLabels:
+      {{- include "analytics.selectorLabels" . | nindent 6 }}
+  strategy:
+{{ toYaml .Values.analytics.updateStrategy | indent 4 }}
+  template:
+    metadata:
+      name: "{{ template "analytics.name" . }}"
+      labels: 
+        {{- include "analytics.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- range $key, $value := .Values.analytics.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+{{- if .Values.analytics.priorityClassName }}
+      priorityClassName: {{ .Values.analytics.priorityClassName }}
+{{- end }}
+      securityContext:
+{{ toYaml .Values.analytics.podSecurityContext | indent 8 }}
+      {{- if .Values.analytics.serviceAccount }}
+      serviceAccount: {{ .Values.analytics.serviceAccount }}
+      {{- end }}
+      {{- if .Values.analytics.hostAliases }}
+      hostAliases: {{ toYaml .Values.analytics.hostAliases | nindent 6 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.analytics.terminationGracePeriod }}
+      volumes:
+{{- if $licenseSecret }}
+        - name: license
+          secret:
+            secretName: {{ $licenseSecret }}
+{{- end }}
+        {{- range .Values.analytics.secretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+        {{- end }}
+      {{- if .Values.analytics.jvm.enabled }}
+        - name: apimgr-jvmxml
+          configMap:
+            name: {{ .Release.Name }}-jvmxml
+            items:
+              - key: apimgr-jvmxml
+                path: jvm.xml
+      {{- end }}
+        - name: events
+{{- if .Values.pvcs.events.enabled }}
+          persistentVolumeClaim:
+            claimName: apigw-events
+{{- else }}
+          emptyDir: {}
+{{- end }}
+      {{- if .Values.analytics.extraVolumes }}
+{{ toYaml ( .Values.analytics.extraVolumes ) | indent 8 }}
+      {{- end }}
+      {{- with .Values.analytics.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.analytics.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- with .Values.analytics.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      {{- end }}
+      initContainers:
+      - name: init-cassandra
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v {{ template "cassandra.name" . }} {{ .Values.cassandra.service.port }}; do echo waiting for cassandra-0; sleep 2; done;']
+      {{- if .Values.mysqlmetrics.internal }}
+      - name: init-mysql
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v {{ template "mysqlmetrics.name" . }} {{ .Values.mysqlmetrics.primary.service.port }}; do echo waiting for mysql; sleep 2; done;']
+      {{- end }}
+      - name: init-anm
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v {{ template "anm.name" . }} {{ .Values.anm.service.port }}; do echo waiting for anm; sleep 2; done;']      
+      {{- if .Values.analytics.extraInitContainers }}
+{{ tpl .Values.analytics.extraInitContainers . | indent 6 }}
+      {{- end }}
+      containers:
+      - name: "{{ template "analytics.name" . }}"
+        securityContext:
+{{ toYaml .Values.analytics.securityContext | indent 10 }}
+      {{- if .Values.analytics.args }}
+        args:
+{{ toYaml .Values.analytics.args | indent 8 }}
+      {{- end }}
+      {{- if .Values.analytics.command }}
+        command:
+{{ toYaml .Values.analytics.command | indent 8 }}
+      {{- end }}
+        image: {{ .Values.global.dockerRepository }}/{{ .Values.analytics.image }}:{{ $imageTag }}
+        imagePullPolicy: {{ $imagePullPolicy }}
+        livenessProbe:
+{{ toYaml .Values.analytics.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.analytics.readinessProbe | indent 10 }}
+        ports:
+        {{- range $key, $value := .Values.analytics.containerPorts }}
+        - name: {{ $key }}
+          containerPort: {{ $value }}
+        {{- end }}
+        {{- if .Values.analytics.extraPorts }}
+{{- toYaml .Values.analytics.extraPorts | nindent 8 }}
+        {{- end }}
+        resources:
+{{ toYaml .Values.analytics.resources | indent 10 }}
+        env:
+        - name: EMT_ANM_HOSTS
+        {{- if .Values.analytics.config.emtAnmHosts }}
+          value: {{ .Values.analytics.config.emtAnmHosts | quote }}
+        {{- else }}
+          value: {{ template "anm.name" . }}:{{ required "Admin Node-Manager port is missing" .Values.anm.containerPorts.anm }}
+        {{- end }}
+        - name: EMT_DEPLOYMENT_ENABLED
+          value: {{ default "false" .Values.analytics.config.emtDeploymentEnabled | quote }}
+        - name: EMT_HEAP_SIZE_MB
+          value: {{ default "1024" .Values.analytics.config.emtHeapSize | quote }}
+        - name: EMT_TRACE_LEVEL
+          value: {{ default "INFO" .Values.analytics.config.emtTraceLevel | quote }}
+        - name: EMT_PARENT_HOST
+          value: {{ default "api-manager" .Values.analytics.config.emtParentHost | quote }}
+        - name: CASS_HOST
+          value: "{{ .Values.cassandra.service.host1 }}"
+        - name: CASS_PORT
+          value: {{ .Values.cassandra.service.port | quote }}
+        - name: CASS_KEYSPACE
+          value: {{ .Values.cassandra.cluster.keyspace }}
+        - name: CASS_TKEYSPACE
+          value: t_{{ .Values.cassandra.cluster.keyspace }}
+        - name: CASS_USERNAME
+          value: {{ .Values.cassandra.dbUser.user }}
+        - name: CASS_PASS
+        {{- if .Values.cassandra.dbUser.existingSecret }}
+{{ toYaml .Values.cassandra.dbUser.existingSecret | indent 10 }}
+        {{- else if .Values.cassandra.dbUser.password }}
+          value: {{ .Values.cassandra.dbUser.password }}
+        {{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: "{{ template "cassandra.name" . }}"
+              key: "cassandra-password"
+        {{- end }}
+{{- if .Values.mysqlmetrics.internal }}
+        - name: METRICS_DB_URL
+          value: "jdbc:mysql://{{ template "mysqlmetrics.name" . }}:{{ .Values.mysqlmetrics.primary.service.port }}/{{ .Values.mysqlmetrics.auth.database }}?useSSL={{ .Values.mysqlmetrics.ssl }}"
+        - name: METRICS_DB_USERNAME
+          value: {{ .Values.mysqlmetrics.auth.username | quote }}
+        - name: METRICS_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "mysql.metrics.secretName" . }}
+              key: mysql-password
+{{- else if .Values.externalMetricsDB.env }}
+{{ toYaml .Values.externalMetricsDB.env | nindent 8 }}
+{{- end }}
+        {{- if .Values.analytics.extraEnvs }}
+{{ toYaml .Values.analytics.extraEnvs | indent 8 }}
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.analytics.jvm.enabled }}
+        - name: apimgr-jvmxml
+          mountPath: "/opt/Axway/analytics/groups/emt-group/emt-service/conf/jvm.xml"
+          subPath: jvm.xml
+        {{- end }}
+{{- if $licenseSecret }}
+        - name: license
+          mountPath: "/opt/Axway/apigateway/conf/licenses/lic.lic"
+          subPath: license
+{{- end }}
+        - name: events
+          mountPath: {{ default "/opt/Axway/apigateway/events" .Values.analytics.volumeMountsPaths.events | quote }}
+        {{- if .Values.analytics.extraVolumeMounts }}
+{{ toYaml (.Values.analytics.extraVolumeMounts ) | indent 8 }}
+        {{- end }}
+        {{- if .Values.analytics.lifecycle }}
+        lifecycle:
+{{ toYaml .Values.analytics.lifecycle | indent 10 }}
+        {{- end }}
+        {{- if .Values.analytics.extraContainers }}
+{{ toYaml .Values.analytics.extraContainers | indent 6 }}
+        {{- end }}
+{{- end }}

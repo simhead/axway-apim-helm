@@ -1,0 +1,33 @@
+{{- if .Values.analytics.enabled -}}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "analytics.name" . }}
+  labels: {{- include "analytics.labels" . | nindent 4 }}
+  annotations:
+{{ toYaml .Values.analytics.service.annotations | indent 4 }}
+spec:
+  type: {{ .Values.analytics.service.type }}
+{{- if .Values.analytics.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+{{- end }}
+{{- with .Values.analytics.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  ports:
+  {{- range .Values.analytics.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+{{- if .nodePort }}
+    nodePort: {{ .nodePort }}
+{{- end }}
+    protocol: TCP
+    targetPort: {{ .targetPort }}
+  {{- end }}
+  selector:
+    {{- include "analytics.selectorLabels" . | nindent 4 }}
+  sessionAffinity: ClientIP
+
+{{- end }}

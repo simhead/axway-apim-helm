@@ -1,0 +1,2171 @@
+---
+# Source: axway-apim/charts/cassandra/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cassandra
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: cassandra
+    helm.sh/chart: cassandra-7.7.3
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+---
+# Source: axway-apim/charts/mysqlapiportal/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mysqlapiportal
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: mysqlapiportal
+    helm.sh/chart: mysqlapiportal-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+secrets:
+  - name: mysqlapiportal
+---
+# Source: axway-apim/charts/mysqlmetrics/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: metricsdb
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: metricsdb
+    helm.sh/chart: mysqlmetrics-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+secrets:
+  - name: metricsdb
+---
+# Source: axway-apim/charts/cassandra/templates/cassandra-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cassandra
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: cassandra
+    helm.sh/chart: cassandra-7.7.3
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  cassandra-password: "Y2hhbmdlbWU="
+---
+# Source: axway-apim/charts/mysqlapiportal/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlapiportal
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: mysqlapiportal
+    helm.sh/chart: mysqlapiportal-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  mysql-root-password: "Y2hhbmdlbWU="
+  mysql-password: "Y2hhbmdlbWU="
+---
+# Source: axway-apim/charts/mysqlmetrics/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: metricsdb
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: metricsdb
+    helm.sh/chart: mysqlmetrics-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  mysql-root-password: "Y2hhbmdlbWU="
+  mysql-password: "Y2hhbmdlbWU="
+---
+# Source: axway-apim/charts/mysqlapiportal/templates/primary/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysqlapiportal
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: mysqlapiportal
+    helm.sh/chart: mysqlapiportal-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+data:
+  my.cnf: |-
+    
+    [mysqld]
+    default_authentication_plugin=mysql_native_password
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mysql
+    plugin_dir=/opt/bitnami/mysql/lib/plugin
+    port=3306
+    socket=/opt/bitnami/mysql/tmp/mysql.sock
+    datadir=/bitnami/mysql/data
+    tmpdir=/opt/bitnami/mysql/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+    log-error=/opt/bitnami/mysql/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+    
+    [client]
+    port=3306
+    socket=/opt/bitnami/mysql/tmp/mysql.sock
+    default-character-set=UTF8
+    plugin_dir=/opt/bitnami/mysql/lib/plugin
+    
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mysql/tmp/mysql.sock
+    pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+---
+# Source: axway-apim/charts/mysqlmetrics/templates/primary/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metricsdb
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: metricsdb
+    helm.sh/chart: mysqlmetrics-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+data:
+  my.cnf: |-
+    
+    [mysqld]
+    default_authentication_plugin=mysql_native_password
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mysql
+    plugin_dir=/opt/bitnami/mysql/lib/plugin
+    port=3306
+    socket=/opt/bitnami/mysql/tmp/mysql.sock
+    datadir=/bitnami/mysql/data
+    tmpdir=/opt/bitnami/mysql/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+    log-error=/opt/bitnami/mysql/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+    
+    [client]
+    port=3306
+    socket=/opt/bitnami/mysql/tmp/mysql.sock
+    default-character-set=UTF8
+    plugin_dir=/opt/bitnami/mysql/lib/plugin
+    
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mysql/tmp/mysql.sock
+    pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+---
+# Source: axway-apim/templates/common/jvmxml-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+   name: apim-devportal-jvmxml
+   namespace: "apim-devportal"
+data:
+    anm-jvmxml: |
+      <ConfigurationFragment>
+         <VMArg name="-Ddont.expect.100.continue=true"/>
+      </ConfigurationFragment>
+      
+    apimgr-jvmxml: |
+      <ConfigurationFragment>
+         <VMArg name="-DCASSANDRA_PROTOCOL_VERSION=4" />
+         <VMArg name="-Dio.swagger.parser.util.RemoteUrl.trustAll=true"/>
+         <VMArg name="-Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true"/>
+      </ConfigurationFragment>
+      
+    apitraffic-jvmxml: |
+      <ConfigurationFragment>
+         <VMArg name="-DCASSANDRA_PROTOCOL_VERSION=4" />
+         <VMArg name="-Dio.swagger.parser.util.RemoteUrl.trustAll=true"/>
+         <VMArg name="-Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true"/>
+      </ConfigurationFragment>
+---
+# Source: axway-apim/templates/mysqlmetrics/mysql-configmap-metrics.yaml
+kind: ConfigMap
+metadata:
+  name: metrics
+  namespace: "apim-devportal"
+apiVersion: v1
+data:
+  metrics.sql: "/* MySQL SQL Script */\n\n/* Don't Drop the Tables when running
+    in Kubernetes */\n-- DROP TABLE if EXISTS audit_message_payload;\n-- DROP TABLE
+    if EXISTS audit_log_points;\n-- DROP TABLE if EXISTS audit_log_sign;\n-- DROP
+    TABLE if EXISTS transaction_data;\n-- DROP TABLE IF EXISTS metrics_alerts;\n--
+    DROP TABLE IF EXISTS metrics_data;\n-- DROP TABLE IF EXISTS metric_groups;\n--
+    DROP TABLE IF EXISTS processes;\n-- DROP TABLE IF EXISTS process_groups;\n-- DROP
+    TABLE IF EXISTS metric_group_types_map;\n-- DROP TABLE if EXISTS metric_group_types;\n--
+    DROP TABLE if EXISTS metric_types;\n-- DROP TABLE if EXISTS time_window_types;\n--
+    DROP TABLE if EXISTS versions;\n\nCREATE TABLE IF NOT EXISTS process_groups (\n
+    \ ID int NOT NULL auto_increment,\n  TopologyID nvarchar(32) NOT NULL,    \n  Name
+    nvarchar(255) NOT NULL,\n  PRIMARY KEY (ID),\n  CONSTRAINT UQ_ProcessGroups_TopologyID
+    UNIQUE(TopologyID)  \n);\n\nCREATE TABLE IF NOT EXISTS processes (\n  ID int NOT
+    NULL auto_increment,\n  TopologyID nvarchar(32) NOT NULL,  \n  Name nvarchar(255)
+    NOT NULL,\n  Host varchar(255) NOT NULL,\n  GroupID int NOT NULL,\n  PRIMARY KEY
+    (ID),\n  CONSTRAINT UQ_Processes_TopologyID UNIQUE(TopologyID),\n  CONSTRAINT
+    FK_ProcessGroups_Processes_ID FOREIGN KEY(GroupID) REFERENCES process_groups(ID)\n);\n\nCREATE
+    TABLE IF NOT EXISTS metric_group_types (\n  ID int NOT NULL AUTO_INCREMENT,\n
+    \ Name nvarchar(255) NOT NULL,\n  \n  PRIMARY KEY (ID),\n  CONSTRAINT UQ_MetricGroupTypes_Name
+    UNIQUE(Name)\n);\n\nCREATE TABLE IF NOT EXISTS metric_types (\n  ID int NOT NULL
+    AUTO_INCREMENT,\n  Name nvarchar(255) NOT NULL,\n  AggregationFunction enum('Unknown',
+    'None', 'SUM', 'AVG', 'MAX', 'MIN') NOT NULL, \n\n  PRIMARY KEY (ID),\n  KEY `AggregationFunction`
+    (`AggregationFunction`),                -- D-82336 \n  CONSTRAINT UQ_MetricTypes_Name
+    UNIQUE(Name)\n);\n\nCREATE TABLE IF NOT EXISTS metric_group_types_map (\n  MetricGroupTypeID
+    int NOT NULL,\n  MetricTypeID int NOT NULL,\n  CONSTRAINT PK_MetricGroupTypesMap
+    PRIMARY KEY (MetricGroupTypeID, MetricTypeID),\n  CONSTRAINT FK_MetricGroupTypesMap_MetricTypes_ID
+    FOREIGN KEY(MetricTypeID) REFERENCES metric_types(ID),\n  CONSTRAINT FK_MetricGroupTypesMap_MetricGroupTypes_ID
+    FOREIGN KEY(MetricGroupTypeID) REFERENCES metric_group_types(ID)\n);\n\nCREATE
+    TABLE IF NOT EXISTS time_window_types (\n  ID int NOT NULL,\n  Name nvarchar(255)
+    NOT NULL,\n  WindowSizeMillis int NOT NULL,\n  PRIMARY KEY (ID)\n);\n\n# Add the
+    currently supported entries\nINSERT IGNORE INTO time_window_types (ID, Name, WindowSizeMillis)
+    VALUES(0, '5-second', 5000);\nINSERT IGNORE INTO time_window_types (ID, Name,
+    WindowSizeMillis) VALUES(1, '5-minute', 300000);\nINSERT IGNORE INTO time_window_types
+    (ID, Name, WindowSizeMillis) VALUES(2, '1-hour', 3600000);\n\nCREATE TABLE IF
+    NOT EXISTS metric_groups (\n  ID int NOT NULL auto_increment,\n  ProcessID int
+    NOT NULL,\n  MetricGroupTypeID int NOT NULL,\n  Name nvarchar(255) default NULL,\n
+    \ DisplayName nvarchar(255) default NULL,\n  ParentID int NOT NULL,\n  \n  PRIMARY
+    KEY (ID),\n  KEY `Name` (`Name`),                -- D-82336 \n  KEY `DisplayName`
+    (`DisplayName`),  -- D-82336 \n  KEY `ParentID` (`ParentID`),        -- D-82336
+    \n  CONSTRAINT FK_MetricGroups_Processes_ID FOREIGN KEY(ProcessID) REFERENCES
+    processes(ID),\n  CONSTRAINT FK_MetricGroups_MetricGroupTypes_ID FOREIGN KEY(MetricGroupTypeID)
+    REFERENCES metric_group_types(ID)\n  /* do not enable constraints ParentID */\n);\n\n\n\n--
+    D-82336 change primary key so that MetricTimestamp is last in the composite index:
+    \"The order of the fields in the index is very important. \n-- The way b-tree
+    works, it is more beneficial to have a field which will be used for “equality”
+    comparison first and the \n-- fields with “range” (more than and less than comparison)
+    second.\n\nCREATE TABLE IF NOT EXISTS metrics_data (\n  MetricTimestamp datetime
+    NOT NULL,\n  MetricGroupID int NOT NULL,\n  MetricTypeID int NOT NULL,    \n  TimeWindowTypeID
+    int NOT NULL,\n  Value BIGINT NOT NULL,\n    PRIMARY KEY (MetricGroupID, MetricTypeID,
+    TimeWindowTypeID, MetricTimestamp),  -- D-82336\n    KEY `MetricTimestamp` (`MetricTimestamp`),
+    \               -- D-82336 \n    CONSTRAINT FK_MetricsData_MetricGroups_ID FOREIGN
+    KEY(MetricGroupID) REFERENCES metric_groups(ID),\n    CONSTRAINT FK_MetricsData_MetricTypes_ID
+    FOREIGN KEY(MetricTypeID) REFERENCES metric_types(ID),\n    CONSTRAINT FK_MetricsData_TimeWindowTypes_ID
+    FOREIGN KEY(TimeWindowTypeID) REFERENCES time_window_types(ID)\n);\n\n\nCREATE
+    TABLE IF NOT EXISTS metrics_alerts (\n  ID varchar(255) NOT NULL,\n  ProcessID
+    int NOT NULL,\n  AlertTimestamp datetime NULL,\n  AlertLevel varchar(5) NOT NULL,\n
+    \ AlertType enum(\n      'AlertMessage',\n      'SlaBreachAlertMessage',\n      'SlaClearAlertMessage')
+    NOT NULL,\n  Message nvarchar(4096) default NULL,\n  MessageID varchar(255) default
+    NULL,\n\n  PRIMARY KEY (ID, ProcessID),\n  KEY MessageID (MessageID),\n  CONSTRAINT
+    FK_MetricsAlerts_Processes_ID FOREIGN KEY(ProcessID) REFERENCES processes(ID)\n);\n\nCREATE
+    TABLE IF NOT EXISTS audit_log_points (                        \n     ID int NOT
+    NULL auto_increment,     \n     ProcessID int NOT NULL,\n     MessageID varchar(255)
+    NOT NULL,                \n     Text longtext NOT NULL,                \n     LogLevel
+    bigint NOT NULL default '0',           \n     LogTimestamp timestamp NOT NULL,\n
+    \    LogTimeMillis bigint NOT NULL default '0',\n     FilterName nvarchar(255)
+    NOT NULL,               \n     FilterType varchar(255) NOT NULL,\n     FilterCategory
+    varchar(255) default NULL,                                                                                         \n\n
+    \    PRIMARY KEY  (ID),                            \n     KEY MessageID (MessageID),\n
+    \    CONSTRAINT FK_AuditLogPoints_Processes_ID FOREIGN KEY(ProcessID) REFERENCES
+    processes(ID)                                             \n   );\n\nCREATE TABLE
+    IF NOT EXISTS audit_message_payload (                                                                                                                         \n
+    \ AuditLogPointsID int NOT NULL default '0',                                                                                                           \n
+    \ MessageBody longblob default NULL,                                                                                                                                       \n
+    \ MessageHeader longblob default NULL,                                                                                                                                     \n
+    \ HttpRequestVerb varchar(10) default NULL,                                                                                                                    \n
+    \ HttpRequestURI varchar(255) default NULL,                                                                                                                   \n
+    \ HttpRequestVersion varchar(4) default NULL,                                           \n
+    \ PRIMARY KEY  (AuditLogPointsID),                                                                                                                             \n
+    \ CONSTRAINT FK_AuditMessagePayload_AuditLogPoints FOREIGN KEY (AuditLogPointsID)
+    REFERENCES audit_log_points (ID) ON DELETE CASCADE ON UPDATE CASCADE  \n);\n\nCREATE
+    TABLE IF NOT EXISTS audit_log_sign (      \n   ProcessID int NOT NULL,                                                   \n
+    \  MessageID varchar(255) NOT NULL,\n   Signature longblob default NULL,                                                                  \n
+    \  PRIMARY KEY  (ProcessID, MessageID),\n   CONSTRAINT FK_AuditLogSign_Processes_ID
+    FOREIGN KEY(ProcessID) REFERENCES processes(ID)                                                                                                            \n
+    );\n\nCREATE TABLE IF NOT EXISTS transaction_data (\n  ProcessID int NOT NULL,\n
+    \ MessageID varchar(255) NOT NULL,\n  TransactionTimestamp datetime NOT NULL,\n
+    \ AttributeName varchar(255) NOT NULL,\n  AttributeValue nvarchar(255) NOT NULL,
+    \n  PRIMARY KEY(ProcessID, MessageID, AttributeName),\n  CONSTRAINT FK_TransactionData_Processes_ID
+    FOREIGN KEY(ProcessID) REFERENCES processes(ID) \n);\n\nCREATE TABLE IF NOT EXISTS
+    versions (\n    Name nvarchar(255) NOT NULL,\n    Value nvarchar(255) NOT NULL,\n
+    \   CONSTRAINT UQ_Versions_Name UNIQUE(Name)  \n);\n\nINSERT IGNORE INTO versions(Name,
+    Value) VALUES('schema', '002-leaf');\n\nCOMMIT;                 \n\nSHOW TABLES;\n\nSHOW
+    DATABASES;\n"
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apigw-events
+  namespace: "apim-devportal"
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apigw-opentraffic
+  namespace: "apim-devportal"
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apigw-trace
+  namespace: "apim-devportal"
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apigw-mysql-metrics
+  labels:
+    data: mysql-metrics
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apigw-mysql-apiportal
+  labels:
+    data: mysql-apiportal
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apiportal-enckey
+  labels:
+    data: apiportal-enckey
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Mi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apiportal-images
+  labels:
+    data: apiportal-images
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 25Mi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apiportal-language
+  labels:
+    data: apiportal-language
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Mi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apiportal-templates
+  labels:
+    data: apiportal-templates
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Mi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apiportal-adm-language
+  labels:
+    data: apiportal-adm-language
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Mi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/templates/common/persistent-volume-claims.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: apiportal-certs
+  labels:
+    data: apiportal-certs
+  annotations:
+    helm.sh/resource-policy: "keep"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Mi
+  storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/charts/cassandra/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra-headless
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: cassandra
+    helm.sh/chart: cassandra-7.7.3
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: intra
+      port: 7000
+      targetPort: intra
+    - name: tls
+      port: 7001
+      targetPort: tls
+    - name: jmx
+      port: 7199
+      targetPort: jmx
+    - name: cql
+      port: 9042
+      targetPort: cql
+    - name: thrift
+      port: 9160
+      targetPort: thrift
+  selector:
+    app.kubernetes.io/name: cassandra
+    app.kubernetes.io/instance: apim-devportal
+---
+# Source: axway-apim/charts/cassandra/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: cassandra
+    helm.sh/chart: cassandra-7.7.3
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: cql
+      port: 9042
+      targetPort: cql
+      nodePort: null
+    - name: thrift
+      port: 9160
+      targetPort: thrift
+      nodePort: null
+    - name: metrics
+      port: 8080
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: cassandra
+    app.kubernetes.io/instance: apim-devportal
+---
+# Source: axway-apim/charts/mysqlapiportal/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqlapiportal-headless
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: mysqlapiportal
+    helm.sh/chart: mysqlapiportal-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+  selector: 
+    app.kubernetes.io/name: mysqlapiportal
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/component: primary
+---
+# Source: axway-apim/charts/mysqlapiportal/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqlapiportal
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: mysqlapiportal
+    helm.sh/chart: mysqlapiportal-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql
+      port: 3306
+      protocol: TCP
+      targetPort: mysql
+      nodePort: null
+  selector: 
+    app.kubernetes.io/name: mysqlapiportal
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/component: primary
+---
+# Source: axway-apim/charts/mysqlmetrics/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: metricsdb-headless
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: metricsdb
+    helm.sh/chart: mysqlmetrics-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+  selector: 
+    app.kubernetes.io/name: metricsdb
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/component: primary
+---
+# Source: axway-apim/charts/mysqlmetrics/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: metricsdb
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: metricsdb
+    helm.sh/chart: mysqlmetrics-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql
+      port: 3306
+      protocol: TCP
+      targetPort: mysql
+      nodePort: null
+  selector: 
+    app.kubernetes.io/name: metricsdb
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/component: primary
+---
+# Source: axway-apim/templates/analytics/analytics-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "analytics"
+    app.kubernetes.io/name: analytics
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+  - name: aga
+    port: 8040
+    protocol: TCP
+    targetPort: 8040
+  selector:
+    app.kubernetes.io/component: "analytics"
+    app.kubernetes.io/name: analytics
+    app.kubernetes.io/instance: apim-devportal
+  sessionAffinity: ClientIP
+---
+# Source: axway-apim/templates/anm/anm-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: anm
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "anm"
+    app.kubernetes.io/name: anm
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app.kubernetes.io/component: "anm"
+    app.kubernetes.io/name: anm
+    app.kubernetes.io/instance: apim-devportal
+  sessionAffinity: ClientIP
+---
+# Source: axway-apim/templates/apimgr/apimgr-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: apimgr
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apimgr"
+    app.kubernetes.io/name: apimgr
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+  - name: manager
+    port: 8075
+    protocol: TCP
+    targetPort: 8075
+  selector:
+    app.kubernetes.io/component: "apimgr"
+    app.kubernetes.io/name: apimgr
+    app.kubernetes.io/instance: apim-devportal
+  sessionAffinity: ClientIP
+---
+# Source: axway-apim/templates/apiportal/apiportal-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: apiportal
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apiportal"
+    app.kubernetes.io/name: apiportal
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app.kubernetes.io/component: "apiportal"
+    app.kubernetes.io/name: apiportal
+    app.kubernetes.io/instance: apim-devportal
+  sessionAffinity: ClientIP
+---
+# Source: axway-apim/templates/apitraffic/apitraffic-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: traffic
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apitraffic"
+    app.kubernetes.io/name: traffic
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+  - name: traffic
+    port: 8065
+    protocol: TCP
+    targetPort: 8065
+  - name: oauth
+    port: 8089
+    protocol: TCP
+    targetPort: 8089
+  - name: tls
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  - name: plain
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/component: "apitraffic"
+    app.kubernetes.io/name: traffic
+    app.kubernetes.io/instance: apim-devportal
+  sessionAffinity: ClientIP
+---
+# Source: axway-apim/templates/analytics/analytics-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "analytics"
+    app.kubernetes.io/name: analytics
+    app.kubernetes.io/instance: apim-devportal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: "analytics"
+      app.kubernetes.io/name: analytics
+      app.kubernetes.io/instance: apim-devportal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      name: "analytics"
+      labels:
+        app.kubernetes.io/component: "analytics"
+        app.kubernetes.io/name: analytics
+        app.kubernetes.io/instance: apim-devportal
+      annotations:
+    spec:
+      securityContext:
+        null
+      terminationGracePeriodSeconds: 
+      volumes:
+      initContainers:
+      - name: init-mysql
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v metricsdb 3306; do echo waiting for mysql; sleep 2; done;']
+      - name: init-anm
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v anm 8090; do echo waiting for anm; sleep 2; done;']
+      containers:
+      - name: "analytics"
+        securityContext:
+          {}
+        args:
+        - /opt/Axway/analytics/posix/bin/start-emt-analytics
+        image: docker.io/axwayaustralia/apim-demo-aga_202111:1.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: liveness.analytics
+            path: /healthcheck
+            port: aga
+            scheme: HTTPS
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: readiness.analytics
+            path: /healthcheck
+            port: aga
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - name: aga
+          containerPort: 8040
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 750Mi
+        env:
+        - name: EMT_ANM_HOSTS
+          value: anm:8090
+        - name: EMT_DEPLOYMENT_ENABLED
+          value: "false"
+        - name: EMT_HEAP_SIZE_MB
+          value: "1024"
+        - name: EMT_TRACE_LEVEL
+          value: "INFO"
+        - name: METRICS_DB_URL
+          value: "jdbc:mysql://metricsdb:3306/metrics?allowPublicKeyRetrieval=true&useSSL=false"
+        - name: METRICS_DB_USERNAME
+          value: "report"
+        - name: METRICS_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: metricsdb
+              key: mysql-password
+        volumeMounts:
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+---
+# Source: axway-apim/templates/anm/anm-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anm
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "anm"
+    app.kubernetes.io/name: anm
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: "anm"
+      app.kubernetes.io/name: anm
+      app.kubernetes.io/instance: apim-devportal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      name: "anm"
+      labels:
+        app.kubernetes.io/component: "anm"
+        app.kubernetes.io/name: anm
+        app.kubernetes.io/instance: apim-devportal
+      annotations:
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 
+      volumes:
+        - name: events
+          persistentVolumeClaim:
+            claimName: apigw-events
+        - name: audit
+          emptyDir: {}
+        - name: anm-jvmxml
+          configMap:
+            name: apim-devportal-jvmxml
+            items:
+              - key: anm-jvmxml
+                path: jvm.xml
+      initContainers:
+      - name: init-mysql
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v metricsdb 3306; do echo waiting for mysql; sleep 2; done;']
+      containers:
+      - name: "anm"
+        args:
+        - /opt/Axway/apigateway/posix/bin/start-emt-nodemanager
+        securityContext:
+          {}
+        image: docker.io/axwayaustralia/apim-demo-anm:1.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: liveness.anm
+            - name: Authorization
+              value: Basic YWRtaW46Y2hhbmdlbWU=
+            path: /api/topology/version
+            port: anm
+            scheme: HTTPS
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: readiness.anm
+            - name: Authorization
+              value: Basic YWRtaW46Y2hhbmdlbWU=
+            path: /api/topology/version
+            port: anm
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - name: anm
+          containerPort: 8090
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 500Mi
+        env:
+        - name: EMT_TOPOLOGY_TTL
+          value: "120"
+        - name: EMT_DEPLOYMENT_ENABLED
+          value: "true"
+        - name: EMT_TOPOLOGY_LOG_DEST
+          value: "1"
+        - name: EMT_TOPOLOGY_LOG_DIR
+          value: "/opt/Axway/apigateway/logs"
+        - name: EMT_TOPOLOGY_LOG_ENABLED
+          value: "false"
+        - name: EMT_TOPOLOGY_LOG_INTERVAL
+          value: "60"
+        - name: EMT_HEAP_SIZE_MB
+          value: "1024"
+        - name: EMT_TRACE_LEVEL
+          value: "INFO"
+        - name: EMT_PARENT_HOST
+          value: "anm"
+        - name: METRICS_DB_URL
+          value: "jdbc:mysql://metricsdb:3306/metrics?useSSL=false"
+        - name: METRICS_DB_USERNAME
+          value: "report"
+        - name: METRICS_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: metricsdb
+              key: mysql-password
+        volumeMounts:
+          - name: events
+            mountPath: "/opt/Axway/apigateway/events"
+          - name: audit
+            mountPath: "/opt/Axway/apigateway/logs"
+          - name: anm-jvmxml
+            mountPath: "/opt/Axway/apigateway/conf/jvm.xml"
+            subPath: jvm.xml
+---
+# Source: axway-apim/templates/apimgr/apimgr-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apimgr
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apimgr"
+    app.kubernetes.io/name: apimgr
+    app.kubernetes.io/instance: apim-devportal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: "apimgr"
+      app.kubernetes.io/name: apimgr
+      app.kubernetes.io/instance: apim-devportal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      name: "apimgr"
+      labels:
+        app.kubernetes.io/component: "apimgr"
+        app.kubernetes.io/name: apimgr
+        app.kubernetes.io/instance: apim-devportal
+      annotations:
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 
+      volumes:
+        - name: apimgr-jvmxml
+          configMap:
+            name: apim-devportal-jvmxml
+            items:
+              - key: apimgr-jvmxml
+                path: jvm.xml
+        - name: events
+          persistentVolumeClaim:
+            claimName: apigw-events
+      initContainers:
+      - name: init-cassandra
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v cassandra 9042; do echo waiting for cassandra-0; sleep 2; done;']
+      - name: init-mysql
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v metricsdb 3306; do echo waiting for mysql; sleep 2; done;']
+      - name: init-anm
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v anm 8090; do echo waiting for anm; sleep 2; done;']
+      containers:
+      - name: "apimgr"
+        securityContext:
+          {}
+        args:
+        - /opt/Axway/apigateway/posix/bin/start-emt-instance
+        image: docker.io/axwayaustralia/apim-demo-apimgt:1.4
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: liveness.apimgr
+            path: /
+            port: manager
+            scheme: HTTPS
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: readiness.apimgr
+            path: /
+            port: manager
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - name: manager
+          containerPort: 8075
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 750Mi
+        env:
+        - name: EMT_ANM_HOSTS
+          value: anm:8090
+        - name: EMT_DEPLOYMENT_ENABLED
+          value: "false"
+        - name: EMT_HEAP_SIZE_MB
+          value: "1024"
+        - name: EMT_TRACE_LEVEL
+          value: "INFO"
+        - name: EMT_PARENT_HOST
+          value: "api-manager"
+        - name: CASS_HOST
+          value: "cassandra"
+        - name: CASS_PORT
+          value: "9042"
+        - name: CASS_KEYSPACE
+          value: axway-apim-management
+        - name: CASS_TKEYSPACE
+          value: t_axway-apim-management
+        - name: CASS_USERNAME
+          value: cassandra
+        - name: CASS_PASS
+          value: changeme
+        - name: METRICS_DB_URL
+          value: "jdbc:mysql://metricsdb:3306/metrics?useSSL=false"
+        - name: METRICS_DB_USERNAME
+          value: "report"
+        - name: METRICS_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: metricsdb
+              key: mysql-password
+        volumeMounts:
+        - name: apimgr-jvmxml
+          mountPath: "/opt/Axway/apigateway/groups/emt-group/emt-service/conf/jvm.xml"
+          subPath: jvm.xml
+        - name: events
+          mountPath: "/opt/Axway/apigateway/events"
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+---
+# Source: axway-apim/templates/apiportal/apiportal-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apiportal
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apiportal"
+    app.kubernetes.io/name: apiportal
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: "apiportal"
+      app.kubernetes.io/name: apiportal
+      app.kubernetes.io/instance: apim-devportal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      name: "apiportal"
+      labels:
+        app.kubernetes.io/component: "apiportal"
+        app.kubernetes.io/name: apiportal
+        app.kubernetes.io/instance: apim-devportal
+      annotations:
+    spec:
+      securityContext:
+        fsGroup: 1048
+        runAsUser: 1048
+      terminationGracePeriodSeconds: 
+      volumes:
+        - name: enckey
+          persistentVolumeClaim:
+            claimName: apiportal-enckey
+        - name: images
+          persistentVolumeClaim:
+            claimName: apiportal-images
+        - name: language
+          persistentVolumeClaim:
+            claimName: apiportal-language
+        - name: templates
+          persistentVolumeClaim:
+            claimName: apiportal-templates
+        - name: admlanguage
+          persistentVolumeClaim:
+            claimName: apiportal-adm-language
+        - name: certs
+          persistentVolumeClaim:
+            claimName: apiportal-certs
+      initContainers:
+      - name: init-mysql-apiportal
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v mysqlapiportal 3306; do echo waiting for apiportal mysql; sleep 2; done;']
+      - name: init-apimgmt
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v apimgr 8075; do echo waiting for apimgr; sleep 2; done;']
+      containers:
+      - name: "apiportal"
+        securityContext:
+          {}
+        image: docker.io/axwayaustralia/apim-demo-apiportal_202111:1.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: liveness.apiportal
+            path: /
+            port: apiportal
+            scheme: HTTPS
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: readiness.apiportal
+            path: /
+            port: apiportal
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - name: apiportal
+          containerPort: 443
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+          requests:
+            cpu: 100m
+            memory: 500Mi
+        env:
+        - name: MYSQL_HOST
+          value: mysqlapiportal
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_DATABASE
+          value: "apiportal"
+        - name: MYSQL_USER
+          value: "report"
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysqlapiportal
+              key: mysql-password
+        - name: APIMANAGER_CONFIGURED
+          value: "1"
+        - name: APIMANAGER_NAME
+          value: "master"
+        - name: APIMANAGER_HOST
+          value: "apimgr"
+        - name: APIMANAGER_PORT
+          value: "8075"
+
+
+
+
+
+
+
+
+
+        - name: APACHE_SSL_ON
+          value: "1"
+        - name: APACHE_SSL_CERT
+          valueFrom: 
+            secretKeyRef:
+              name: apiportal-certificates
+              key: apache.crt
+        - name: APACHE_SSL_PRIVATE_KEY
+          valueFrom: 
+            secretKeyRef:
+              name: apiportal-certificates
+              key: apache.key
+        volumeMounts:
+          - name: enckey
+            mountPath: /opt/axway/apiportal/enckey
+          - name: images
+            mountPath: /opt/axway/apiportal/htdoc/images
+          - name: language
+            mountPath: /opt/axway/apiportal/htdoc/language
+          - name: templates
+            mountPath: /opt/axway/apiportal/htdoc/templates
+          - name: admlanguage
+            mountPath: /opt/axway/apiportal/htdoc/administrator/language
+          - name: certs
+            mountPath: /opt/axway/apiportal/htdoc/administrator/components/com_apiportal/assets/cert
+---
+# Source: axway-apim/templates/apitraffic/apitraffic-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apitraffic"
+    app.kubernetes.io/name: traffic
+    app.kubernetes.io/instance: apim-devportal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: "apitraffic"
+      app.kubernetes.io/name: traffic
+      app.kubernetes.io/instance: apim-devportal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      name: "traffic"
+      labels:
+        app.kubernetes.io/component: "apitraffic"
+        app.kubernetes.io/name: traffic
+        app.kubernetes.io/instance: apim-devportal
+      annotations:
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 
+      volumes:
+        - name: events
+          persistentVolumeClaim:
+            claimName: apigw-events
+        - name: opentraffic
+          persistentVolumeClaim:
+            claimName: apigw-opentraffic
+        - name: trace
+          persistentVolumeClaim:
+            claimName: apigw-trace
+        - name: audit
+          emptyDir: {}
+        - name: apitraffic-jvmxml
+          configMap:
+            name: apim-devportal-jvmxml
+            items:
+              - key: apitraffic-jvmxml
+                path: jvm.xml
+      initContainers:
+      - name: init-cassandra
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v cassandra 9042; do echo waiting for cassandra-0; sleep 2; done;']
+      - name: init-mysql
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v metricsdb 3306; do echo waiting for mysql; sleep 2; done;']
+      - name: init-anm
+        image: busybox:1.33
+        command: ['sh', '-c', 'until nc -w 3 -v anm 8090; do echo waiting for anm; sleep 2; done;']
+      containers:
+      - name: "traffic"
+        securityContext:
+          null
+        args:
+        - /opt/Axway/apigateway/posix/bin/start-emt-instance
+        image: docker.io/axwayaustralia/apim-demo-apimgt:1.4
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: liveness.apimgr
+            path: /healthcheck
+            port: plain
+            scheme: HTTP
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: readiness.apimgr
+            path: /healthcheck
+            port: plain
+            scheme: HTTP
+          initialDelaySeconds: 40
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - name: oauth
+          containerPort: 8089
+        - name: plain
+          containerPort: 8080
+        - name: tls
+          containerPort: 8081
+        - name: traffic
+          containerPort: 8065
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1536Mi
+          requests:
+            cpu: 200m
+            memory: 1536Mi
+        env: 
+        - name: EMT_ANM_HOSTS
+          value: anm:8090
+        - name: EMT_DEPLOYMENT_ENABLED
+          value: "false"
+        - name: EMT_HEAP_SIZE_MB
+          value: "1024"
+        - name: EMT_TRACE_LEVEL
+          value: "INFO"
+        - name: EMT_PARENT_HOST
+          value: "api-gateway"
+
+        - name: CASS_HOST
+          value: "cassandra"
+        - name: CASS_PORT
+          value: "9042"
+        - name: CASS_KEYSPACE
+          value: axway-apim-management
+        - name: CASS_TKEYSPACE
+          value: t_axway-apim-management
+        - name: CASS_USERNAME
+          value: cassandra
+        - name: CASS_PASS
+          value: changeme
+        - name: METRICS_DB_URL
+          value: "jdbc:mysql://metricsdb:3306/metrics?useSSL=false"
+        - name: METRICS_DB_USERNAME
+          value: "report"
+        - name: METRICS_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: metricsdb
+              key: mysql-password
+        volumeMounts:
+        - name: apitraffic-jvmxml
+          mountPath: "/opt/Axway/apigateway/groups/emt-group/emt-service/conf/jvm.xml"
+          subPath: jvm.xml
+        - name: events
+          mountPath: "/opt/Axway/apigateway/events"
+        - name: opentraffic
+          mountPath: "/opt/Axway/apigateway/logs/opentraffic"
+        - name: trace
+          mountPath: "/opt/Axway/apigateway/groups/emt-group/emt-service/trace"
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+---
+# Source: axway-apim/charts/cassandra/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: cassandra
+    helm.sh/chart: cassandra-7.7.3
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cassandra
+      app.kubernetes.io/instance: apim-devportal
+  serviceName: cassandra-headless
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cassandra
+        helm.sh/chart: cassandra-7.7.3
+        app.kubernetes.io/instance: apim-devportal
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      
+      serviceAccountName: cassandra
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: cassandra
+                    app.kubernetes.io/instance: apim-devportal
+                namespaces:
+                  - "apim-devportal"
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: cassandra
+          command:
+            - bash
+            - -ec
+            - |
+              # Node 0 is the password seeder
+              if [[ $POD_NAME =~ (.*)-0$ ]]; then
+                  echo "Setting node as password seeder"
+                  export CASSANDRA_PASSWORD_SEEDER=yes
+              else
+                  # Only node 0 will execute the startup initdb scripts
+                  export CASSANDRA_IGNORE_INITDB_SCRIPTS=1
+              fi
+              /opt/bitnami/scripts/cassandra/entrypoint.sh /opt/bitnami/scripts/cassandra/run.sh
+          image: docker.io/bitnami/cassandra:3.11.11-debian-10-r4
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: CASSANDRA_CLUSTER_NAME
+              value: axway-apim-management
+            - name: CASSANDRA_SEEDS
+              value: "cassandra-0.cassandra-headless.apim-devportal.svc.cluster.local"
+            - name: CASSANDRA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cassandra
+                  key: cassandra-password
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: CASSANDRA_USER
+              value: "cassandra"
+            - name: CASSANDRA_NUM_TOKENS
+              value: "256"
+            - name: CASSANDRA_DATACENTER
+              value: dc1
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: SimpleSnitch
+            - name: CASSANDRA_KEYSTORE_LOCATION
+              value: "/opt/bitnami/cassandra/certs/keystore"
+            - name: CASSANDRA_TRUSTSTORE_LOCATION
+              value: "/opt/bitnami/cassandra/certs/truststore"
+            - name: CASSANDRA_RACK
+              value: rack1
+            - name: CASSANDRA_ENABLE_RPC
+              value: "true"
+            - name: CASSANDRA_TRANSPORT_PORT_NUMBER
+              value: "7000"
+            - name: CASSANDRA_JMX_PORT_NUMBER
+              value: "7199"
+            - name: CASSANDRA_CQL_PORT_NUMBER
+              value: "9042"
+          envFrom:
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  nodetool status
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  nodetool status | grep -E "^UN\\s+${POD_IP}"
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          ports:
+            - name: intra
+              containerPort: 7000
+            - name: tls
+              containerPort: 7001
+            - name: jmx
+              containerPort: 7199
+            - name: cql
+              containerPort: 9042
+            - name: thrift
+              containerPort: 9160
+          resources: 
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/cassandra
+            
+      volumes:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: cassandra
+          app.kubernetes.io/instance: apim-devportal
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        storageClassName: kops-ssd-1-17
+---
+# Source: axway-apim/charts/mysqlapiportal/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysqlapiportal
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: mysqlapiportal
+    helm.sh/chart: mysqlapiportal-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: mysqlapiportal
+      app.kubernetes.io/instance: apim-devportal
+      app.kubernetes.io/component: primary
+  serviceName: mysqlapiportal
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/configuration: b9f593b1b456a724110751f1b81a1b3de71249a8d07369a632e2d5bf9fdce103
+      labels:
+        app.kubernetes.io/name: mysqlapiportal
+        helm.sh/chart: mysqlapiportal-8.8.23
+        app.kubernetes.io/instance: apim-devportal
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: primary
+    spec:
+      
+      serviceAccountName: mysqlapiportal
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: mysqlapiportal
+                    app.kubernetes.io/instance: apim-devportal
+                    app.kubernetes.io/component: primary
+                namespaces:
+                  - "apim-devportal"
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: mysql
+          image: docker.io/bitnami/mysql:8.0.28-debian-10-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlapiportal
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              value: "report"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlapiportal
+                  key: mysql-password
+            - name: MYSQL_DATABASE
+              value: "apiportal"
+          ports:
+            - name: mysql
+              containerPort: 3306
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  password_aux="${MYSQL_ROOT_PASSWORD:-}"
+                  if [[ -f "${MYSQL_ROOT_PASSWORD_FILE:-}" ]]; then
+                      password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
+                  fi
+                  mysqladmin status -uroot -p"${password_aux}"
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  password_aux="${MYSQL_ROOT_PASSWORD:-}"
+                  if [[ -f "${MYSQL_ROOT_PASSWORD_FILE:-}" ]]; then
+                      password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
+                  fi
+                  mysqladmin status -uroot -p"${password_aux}"
+          startupProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  password_aux="${MYSQL_ROOT_PASSWORD:-}"
+                  if [[ -f "${MYSQL_ROOT_PASSWORD_FILE:-}" ]]; then
+                      password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
+                  fi
+                  mysqladmin status -uroot -p"${password_aux}"
+          resources: 
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/mysql
+            - name: config
+              mountPath: /opt/bitnami/mysql/conf/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: config
+          configMap:
+            name: mysqlapiportal
+        - name: data
+          persistentVolumeClaim:
+            claimName: apigw-mysql-apiportal
+---
+# Source: axway-apim/charts/mysqlmetrics/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: metricsdb
+  namespace: apim-devportal
+  labels:
+    app.kubernetes.io/name: metricsdb
+    helm.sh/chart: mysqlmetrics-8.8.23
+    app.kubernetes.io/instance: apim-devportal
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: metricsdb
+      app.kubernetes.io/instance: apim-devportal
+      app.kubernetes.io/component: primary
+  serviceName: metricsdb
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/configuration: 9bea0203b793b025098ef3d3ac6f3dc9e5d4ace076e7d57c66c769fc83eadfff
+      labels:
+        app.kubernetes.io/name: metricsdb
+        helm.sh/chart: mysqlmetrics-8.8.23
+        app.kubernetes.io/instance: apim-devportal
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: primary
+    spec:
+      
+      serviceAccountName: metricsdb
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: metricsdb
+                    app.kubernetes.io/instance: apim-devportal
+                    app.kubernetes.io/component: primary
+                namespaces:
+                  - "apim-devportal"
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: mysql
+          image: docker.io/bitnami/mysql:8.0.28-debian-10-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: metricsdb
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              value: "report"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: metricsdb
+                  key: mysql-password
+            - name: MYSQL_DATABASE
+              value: "metrics"
+          ports:
+            - name: mysql
+              containerPort: 3306
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  password_aux="${MYSQL_ROOT_PASSWORD:-}"
+                  if [[ -f "${MYSQL_ROOT_PASSWORD_FILE:-}" ]]; then
+                      password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
+                  fi
+                  mysqladmin status -uroot -p"${password_aux}"
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  password_aux="${MYSQL_ROOT_PASSWORD:-}"
+                  if [[ -f "${MYSQL_ROOT_PASSWORD_FILE:-}" ]]; then
+                      password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
+                  fi
+                  mysqladmin status -uroot -p"${password_aux}"
+          startupProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - |
+                  password_aux="${MYSQL_ROOT_PASSWORD:-}"
+                  if [[ -f "${MYSQL_ROOT_PASSWORD_FILE:-}" ]]; then
+                      password_aux=$(cat "$MYSQL_ROOT_PASSWORD_FILE")
+                  fi
+                  mysqladmin status -uroot -p"${password_aux}"
+          resources: 
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/mysql
+            - name: custom-init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+            - name: config
+              mountPath: /opt/bitnami/mysql/conf/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: config
+          configMap:
+            name: metricsdb
+        - name: custom-init-scripts
+          configMap:
+            name: metrics
+        - name: data
+          persistentVolumeClaim:
+            claimName: apigw-mysql-metrics
+---
+# Source: axway-apim/templates/analytics/analytics-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: analytics
+  labels: 
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "analytics"
+    app.kubernetes.io/name: analytics
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+      - aga.apim.13.211.13.10.nip.io
+  rules:
+  - host: aga.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: analytics
+            port:
+              number: 8040
+---
+# Source: axway-apim/templates/anm/anm-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anm
+  labels: 
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "anm"
+    app.kubernetes.io/name: anm
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+      - anm.apim.13.211.13.10.nip.io
+  rules:
+  - host: anm.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: anm
+            port:
+              number: 8090
+---
+# Source: axway-apim/templates/apimgr/apimgr-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apimgr
+  labels: 
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apimgr"
+    app.kubernetes.io/name: apimgr
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+      - manager.apim.13.211.13.10.nip.io
+  rules:
+  - host: manager.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: apimgr
+            port:
+              number: 8075
+---
+# Source: axway-apim/templates/apiportal/apiportal-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apiportal
+  labels: 
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apiportal"
+    app.kubernetes.io/name: apiportal
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+      - apiportal.apim.13.211.13.10.nip.io
+  rules:
+  - host: apiportal.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: apiportal
+            port:
+              number: 443
+---
+# Source: axway-apim/templates/apitraffic/apitraffic-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traffic
+  labels: 
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: axway-apim-2.3.0
+    app.kubernetes.io/component: "apitraffic"
+    app.kubernetes.io/name: traffic
+    app.kubernetes.io/instance: apim-devportal
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+      - traffic.apim.13.211.13.10.nip.io
+  rules:
+  - host: traffic.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: traffic
+            port:
+              number: 8065
+  - host: oauth.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: traffic
+            port:
+              number: 8089
+  - host: tls.apim.13.211.13.10.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: traffic
+            port:
+              number: 8081
+

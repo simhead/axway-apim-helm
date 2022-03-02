@@ -1,0 +1,462 @@
+# Axway API-Management Helm-Chart values file.
+# To use the helmet chart, create your own values.<customer>. and use it for installation as suggested in the readme.
+
+global:
+   # ImagePullSecrets made available to all Deployments/StateFullSets
+   imagePullSecrets: []
+   #  - name: myRegistryKeySecretName
+
+   imagePullPolicy: "IfNotPresent"
+
+   # Setup the docker repository used to pull images for anm, apimgr & traffic
+   # Example: docker-registry.demo.axway.com/other-demo
+   # You can override the docker-registry used for anm, api-manager & api-traffic
+   dockerRepository: ""
+   # Setup the image tag (e.g. 7.7-20210530)
+   # You can override the image tag used for anm, api-manager & api-traffic
+   imageTag: ""
+
+   updateStrategy: "RollingUpdate"
+
+   # The domain name used by allComponents as default
+   domainName: ""
+
+   # AZURE, OPENSHIFT, MINIKUBE
+   platform: ""
+   # If you provide your license in your myValues.yaml, a Secret axway-apim-license will be created and automatically mountered 
+   # into the API Gateway PODs. 
+   # Alternatively, you can use your own secret and reference it via licenseSecretName below.
+   # Or you can build the image with the license included.
+   license: 
+      # FIPS=1
+      # SalesForce Connector=1
+      # ServiceNow Connector=1
+      # analytics=1
+      # ...
+      # .....
+      # ...
+      # # SIGNATURE: 8eee280ede1a7fd94b91130c78da44f403f8bd9f927bc96bfd6a2a94839c049b
+      # # SIGNATURE: 096e86bb928c5865c77596de3814f116b9b3f4923441ac0cb8e7189f9c0f5971
+
+   # If you want to use your own secret, specify the name of the secret here, 
+   # which contains the license Base64 encoded with key license
+   existingLicenseSecret: 
+
+   # Configure JVM settings
+   jvm:
+      # Set to false if you prefer to include (bake in) your jvm.xml using the mergeDir option
+      enabled: true
+      config: |
+         <ConfigurationFragment>
+            <VMArg name="-Ddont.expect.100.continue=true"/>
+         </ConfigurationFragment>
+##################################################################################################################################
+#   API-Portal
+##################################################################################################################################
+apiportal:
+   enabled: true
+   replicas: 1
+   image: "axwayaustralia/apim-demo-apiportal_202111"
+   imageTag: "1.0"
+   # Option to overwrite the globals.dockerRepository
+   dockerRepository: "docker.io"
+   containerPorts:
+      apiportal: 443
+
+   # Controls the service for the API-Portal
+   service:
+      type: "ClusterIP"
+      loadBalancerIP: ""
+      port: 443
+      nodePort: ""
+      labels: {}
+      annotations: {}
+
+   config: 
+      # Enable if you would like to pre-configure the API-Manager service in API-Portal
+      master: {name: "api manager", host: "100.70.166.229", port: "8075"}
+         # name: "Master"
+         # host: "my-api-manager-host"
+         # port: "8082"
+      ssl:
+         enabled: true
+         generateCertificates: true
+         # Use an existing secret object for the required certificates. 
+         # Certificate and Key must be stored with keys: apiportal.crt and apiportal.key: 
+         existingSecret: ""
+      tryIt:
+         # enabledGet: true
+         # enabledPost: true
+         # enabledPut: true
+         # enabledDelete: true
+         # enabledPatch: true
+         # enabledHead: true
+         # enabledOptions: false
+      redirectAfterLogin:
+         # url: "/home"
+      informationSource:
+         # name: "summary" # Must be summary or description
+      monitoringRange:
+         # value: "2" # is an integer, which range is 2 to 6
+      sessionTimeout:
+         # timehoutHours: "24"
+      clamAv:
+         # host: ""
+         # port: ""
+      loginProtection: 
+         # attemptsBeforeLock: "3"
+         # attemptsBeforeRecapcha: "3"
+         # lockDurationSec: "600"
+         # lockIp: ""
+      sso:
+         # path: ""
+         # entityId: ""
+         # whitelist: ""
+      whitelist:
+         enabled: true
+         # oauthWhitelist: ""
+         apiWhitelist: "apitraffic.apim-elk.52.64.3.209.nip.io,apimgmt.apim-elk.52.64.3.209.nip.io,apiportal.apim-elk.52.64.3.209.nip.io,api.dev-openbanking.demoaxway.com,mtls-api-proxy.dev-openbanking.demoaxway.com"
+   
+   redis:
+      enabled: false
+      internal: false
+      host: "apiportal-redis-headless"
+      port: "6379"
+      cacheTimeout: "600"
+
+   # Allows you to add any environment variables
+   extraEnvs: []
+   # - name: MY_ENVIRONMENT_VAR
+   #   value: the_value_goes_here
+
+   # General ingress settings.
+   ingress:
+      enabled: true
+      name: apiportal
+      # Set the annotations according to your Ingress-Controller
+      annotations: {}
+         # kubernetes.io/ingress.class: azure/application-gateway
+         # appgw.ingress.kubernetes.io/backend-protocol: https
+         # cert-manager.io/cluster-issuer: letsencrypt-prod
+         # cert-manager.io/acme-challenge-type: http01
+         # appgw.ingress.kubernetes.io/ssl-redirect: "true"
+         # appgw.ingress.kubernetes.io/connection-draining: "true"
+         # appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
+      hosts: {}
+         # - host: anm.domain.internal
+         #  paths:
+         #   - path: /
+      tls: []
+      #  - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
+
+   securityContext: {}
+
+   # If enabled required PVCs for the API-Portal are created
+   persistence: 
+      enabled: true
+
+   # Allows you to add any config files
+   extraVolumes: []
+   # - name: extras
+   #   emptyDir: {}
+   extraVolumeMounts: []
+   # - name: extras
+   #   mountPath: /usr/share/extras
+   #   readOnly: true
+
+   # A list of secrets and their paths to mount inside the pod
+   # This is useful for mounting certificates for security other sensitive values
+   secretMounts: []
+   #  - name: some-secret-stuff
+   #    secretName: some-secret-stuff
+   #    path: /opt/Axway/apigateway/conf/some/secret
+
+   # 1048 is the Apache user, which is required during installation
+   podSecurityContext:
+      runAsUser: 1048
+      fsGroup: 1048
+      
+   nodeSelector: {}
+   tolerations: []
+   affinity: {}
+
+   nameOverride: ""
+
+   labels: {}
+
+   podAnnotations: {}
+
+   readinessProbe:
+      httpGet:
+         httpHeaders:
+            - name: k8sprobe
+              value: readiness.apiportal
+         path: /
+         port: apiportal
+         scheme: HTTPS
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 1
+
+   livenessProbe:
+      httpGet:
+         httpHeaders:
+            - name: k8sprobe
+              value: liveness.apiportal
+         path: /
+         port: apiportal
+         scheme: HTTPS
+      initialDelaySeconds: 60
+      periodSeconds: 60
+      timeoutSeconds: 5
+      failureThreshold: 3
+      successThreshold: 1
+
+   updateStrategy: 
+      rollingUpdate:
+         maxSurge: 25%
+         maxUnavailable: 25%
+      type: RollingUpdate
+
+   resources:
+      requests:
+         cpu: "100m"
+         memory: "500Mi"
+      limits:
+         cpu: "500m"
+         memory: "1000Mi"
+
+   args: []
+   # - /do/some/other/stuff
+
+   command: []
+   # e.g. a do nothing command
+   # command: [ "sh", "-c", "tail -f /dev/null" ]
+
+   extraContainers: []
+   # - name: do-something
+   #   image: busybox
+   #   command: ['do', 'something']
+
+##################################################################################################################################
+#   PVCs
+##################################################################################################################################
+pvcs:
+   # Events is used by ANM, APIMGR and APITRAFFIC
+   events:
+      # If disabled an emptyDir volume is used instead
+      # Useful if you stream log information to an external logging system
+      enabled: true
+      eventsVolumeClaim:
+         accessModes: [ "ReadWriteOnce" ]
+         resources:
+            requests:
+               storage: 10Gi
+
+   # OpenTraffic is used by APIMGR and APITRAFFIC
+   opentraffic:
+      # If disabled an emptyDir volume is used instead
+      # Useful if you stream log information to an external logging system
+      enabled: true
+      opentrafficVolumeClaim:
+         accessModes: [ "ReadWriteOnce" ]
+         resources:
+            requests:
+               storage: 10Gi
+
+   # Trace is used by APIMGR and APITRAFFIC
+   trace:
+      # If disabled an emptyDir volume is used instead
+      # Useful if you stream log information to an external logging system
+      enabled: true
+      traceVolumeClaim:
+         accessModes: [ "ReadWriteOnce" ]
+         resources:
+            requests:
+               storage: 30Gi
+
+   # Trace is used by ANM
+   audit:
+      # If disabled an emptyDir volume is used instead
+      # Useful if you stream log information to an external logging system
+      enabled: false
+      auditVolumeClaim:
+         accessModes: [ "ReadWriteOnce" ]
+         resources:
+            requests:
+               storage: 1Gi
+
+   metricsDbVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 10Gi
+   apiportalDbVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 1Gi
+
+   apiportalImagesVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 25Mi
+
+   apiportalEnckeyVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 2Mi
+
+   apiportalLanguageVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 2Mi
+
+   apiportalTemplatesVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 5Mi
+
+   apiportalAdmLanguageVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 2Mi
+
+   apiportalCertsVolumeClaim:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+         requests:
+            storage: 2Mi
+##################################################################################################################################
+#   CASSANDRA DATABASE
+##################################################################################################################################
+
+##################################################################################################################################
+#   EXTERNAL Metrics DB
+##################################################################################################################################
+
+##################################################################################################################################
+#   EXTERNAL API-Portal DB
+##################################################################################################################################
+
+# Is used by the API-Portal to establish the API-Portal-DB-Connection
+# This is ignored, when using mysqlapiportal.internal.
+externalApiportalDB: {}
+#   env:
+     #- name: MYSQL_HOST
+     #  value: ""
+     #- name: MYSQL_PORT
+     #  value: ""
+     #- name: MYSQL_DATABASE
+     #  value: ""
+     #- name: MYSQL_USER
+     #  value: ""
+     #- name: MYSQL_PASSWORD
+     #  valueFrom: 
+     #    secretKeyRef: 
+     #      name: my-secret
+     #      key: my-key
+
+##################################################################################################################################
+#   INTERNAL METRICS DATABASE
+##################################################################################################################################
+mysqlmetrics:
+   internal: true
+
+   # Only a subset of possible parameters is mentioned here. You can review and use all configuration values 
+   # as documented here:
+   # https://github.com/bitnami/charts/blob/master/bitnami/mysql/values.yaml
+
+   image:
+     # registry: docker.io
+     # repository: bitnami/mysql
+     # tag: 8.0.27-debian-10-r8
+
+   nameOverride: "mysqlmetrics"
+   fullnameOverride: "mysqlmetrics"
+
+   primary:
+      persistence:
+         enabled: true
+         existingClaim: apigw-mysql-metrics
+
+   auth: 
+      database: "metrics"
+      # If not set a password is randomly generated
+      # Please note: You need to provide the generated password to upgrade the release
+      rootPassword: "changeme"
+      username: "report"
+      # If not set a password is randomly generated
+      # Please note: You need to provide the generated password to upgrade the release
+      password: "changeme"
+      # An existing secret must contain the keys mysql-root-password / mysql-password
+      existingSecret: ""
+
+   initdbScriptsConfigMap: metrics
+
+   nodeSelector: {}
+   tolerations: []
+   affinity: {}
+
+##################################################################################################################################
+#   INTERNAL API-Portal DATABASE
+##################################################################################################################################
+mysqlapiportal:
+   internal: true
+
+   # Only a subset of possible parameters is mentioned here. You can review and use all configuration values 
+   # as documented here:
+   # https://github.com/bitnami/charts/blob/master/bitnami/mysql/values.yaml
+
+   nameOverride: "mysqlapiportal"
+   fullnameOverride: "mysqlapiportal"
+
+   primary:
+      persistence:
+         enabled: true
+         existingClaim: apigw-mysql-apiportal
+
+   auth: 
+      database: "apiportal"
+      # If not set a password is randomly generated
+      # Please note: You need to provide the generated password to upgrade the release
+      rootPassword: "changeme"
+      username: "report"
+      # If not set a password is randomly generated
+      # Please note: You need to provide the generated password to upgrade the release
+      password: "changeme"
+      # An existing secret must contain the keys mysql-root-password / mysql-password
+      existingSecret: ""
+
+   securityContext: {}
+
+   nodeSelector: {}
+   tolerations: []
+   affinity: {}
+
+##################################################################################################################################
+#   INTERNAL REDIS DATABASE
+##################################################################################################################################
+apiportalredis:
+   nameOverride: "apiportal-redis"
+   fullnameOverride: "apiportal-redis"
+   architecture: "standalone"
+   auth:
+      # Redis with AuthN is not supported by the API-Portal
+      enabled: false
+
+##################################################################################################################################
+#   BASE - IMAGE for OpenShift only
+##################################################################################################################################
+base:
+   useImagestream: false
+   imageName: 
+   imageTag: 

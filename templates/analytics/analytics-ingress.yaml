@@ -1,0 +1,50 @@
+{{- if .Values.analytics.enabled -}}
+{{- if ne .Values.global.platform "OPENSHIFT" }}
+
+{{- $analyticsName := include "analytics.name" . -}}
+{{- $domainName := include "domain.name" . -}}
+
+{{ $hasIngressV1 := ternary "true" "false" (.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress") -}}
+
+{{- if eq $hasIngressV1 "true" }}
+apiVersion: networking.k8s.io/v1
+{{- else }}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ template "analytics.name" . }}
+  labels: {{ include "analytics.labels" . | nindent 4 }}
+  {{- with .Values.analytics.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.analytics.ingress.tls }}
+  tls:
+{{ toYaml .Values.analytics.ingress.tls | indent 4 }}
+  {{- end }}
+  rules:
+{{- range .Values.analytics.service.ports }}
+  {{- if .ingress.enabled }}
+  - host: {{ .ingress.host }}.{{ $domainName }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          {{- if eq $hasIngressV1 "true" }}
+          service:
+            name: {{ $analyticsName }}
+            port:
+              number: {{ .port }}
+          {{- else }}
+          serviceName: {{ $analyticsName }}
+          servicePort: {{ .port }}
+          {{- end }}
+  {{- end }}
+{{- end }}
+
+
+{{- end }}
+{{- end }}

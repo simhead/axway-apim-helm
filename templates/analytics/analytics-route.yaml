@@ -1,0 +1,20 @@
+{{- if .Values.analytics.enabled -}}
+
+{{- if eq .Values.global.platform "OPENSHIFT" }}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ .Values.analytics.name }}
+spec:
+  to:
+    kind: Service
+    name: {{ .Values.analytics.name }}
+  port:
+    targetPort: {{ .Values.analytics.trafficPort }}
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+{{- end }}
+
+{{- end }}

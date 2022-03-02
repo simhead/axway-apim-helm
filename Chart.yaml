@@ -1,0 +1,47 @@
+apiVersion: v2
+appVersion: 2.3.0
+dependencies:
+- name: common
+  repository: https://charts.bitnami.com/bitnami
+  tags:
+  - bitnami-common
+  version: 1.x.x
+- alias: cassandra
+  condition: cassandra.internal
+  name: cassandra
+  repository: https://charts.bitnami.com/bitnami
+  version: 7.7.3
+- alias: mysqlmetrics
+  condition: mysqlmetrics.internal
+  name: mysql
+  repository: https://charts.bitnami.com/bitnami
+  tags:
+  - bitnami/mysql
+  version: 8.x.x
+- alias: mysqlapiportal
+  condition: mysqlapiportal.internal
+  name: mysql
+  repository: https://charts.bitnami.com/bitnami
+  tags:
+  - bitnami/mysql
+  version: 8.x.x
+- alias: apiportalredis
+  condition: apiportal.redis.internal
+  name: redis
+  repository: https://charts.bitnami.com/bitnami
+  tags:
+  - bitnami/redis
+  version: 15.x.x
+description: Helm chart for installing the Axway API-Management solution.
+home: https://github.com/Axway/Cloud-Automation/tree/master/APIM/Helmchart
+icon: https://images.app.goo.gl/MbQyRo2M2jzAsed79
+keywords:
+- API Management, Axway, AMPLIFY API, Demo, Azure
+kubeVersion: '>=v1.11.x-r0'
+maintainers:
+- email: ncomandini@axway.com
+  name: cloud-automation community
+- email: cwiechmann@axway.com
+  name: cloud-automation community
+name: axway-apim
+version: 2.3.0
